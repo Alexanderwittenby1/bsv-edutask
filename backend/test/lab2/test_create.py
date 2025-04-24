@@ -8,14 +8,13 @@ class TestCreateUserIntegration:
     @pytest.fixture(scope="function")
     def real_dao(self):
         """Fixture to provide a DAO instance connected to a real test database."""
-        client = MongoClient(
-            "mongodb://root:root@localhost:27017")  # Använd autentisering från Docker
-        db = client.edutask  # Använd en separat testdatabas
-        collection_name = "user"
-
-        dao = DAO(collection_name=collection_name)
-        dao.collection = db[collection_name]
-
+        # Anslut till databasen med autentisering
+        # Använd root-användarnamn och lösenord från Docker
+        client = MongoClient("mongodb://root:root@edutask-mongodb:27017")
+        db = client.edutask
+        # Skapa en DAO-instans
+        dao = DAO(collection_name="user")
+        dao.collection = db["test_user"]
         # Rensa databasen innan varje test
         dao.collection.delete_many({})
 
