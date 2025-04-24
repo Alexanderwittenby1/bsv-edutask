@@ -1,6 +1,8 @@
 from src.controllers.usercontroller import UserController
 from src.util.dao import DAO
+import unittest.mock as mock
 import random
+
 
 def hasAttribute(obj: dict, attribute: str):
     """Check whether a given dict contains a specific attribute
@@ -14,6 +16,7 @@ def hasAttribute(obj: dict, attribute: str):
         False -- if the dict does not contain the attribute as a key or is None    
     """
     return (attribute in obj)
+
 
 class ValidationHelper:
     def __init__(self, usercontroller: UserController):
@@ -37,6 +40,7 @@ class ValidationHelper:
         if user['age'] > 18:
             return "valid"
         return "underaged"
+
 
 class ValidationHelper2:
     def __init__(self):
@@ -62,6 +66,7 @@ class ValidationHelper2:
         if user['age'] > 18:
             return "valid"
         return "underaged"
+
 
 def diceroll():
     """Roll a simple six sided die and see if you win.
