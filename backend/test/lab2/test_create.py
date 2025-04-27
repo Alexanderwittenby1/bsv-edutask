@@ -2,7 +2,7 @@ import pytest
 from pymongo import MongoClient
 from pymongo.errors import WriteError, DuplicateKeyError
 from src.util.dao import DAO
-
+from src.util.validators import getValidator
 # Hur du gör för att köra testerna!!!
 # Starta docker med docker-compose up
 # Skriv docker ps för att se att containern är igång
@@ -10,52 +10,29 @@ from src.util.dao import DAO
 # Kör testerna med pytest -s -m lab2_create
 # Om du vill köra testerna utan docker, se till att du har MongoDB installerat och kör igång den
 
-# En custom validator för att säkerställa att alla användare har ett unikt email och att de har rätt datatyper
-
-# Testade med att hämta validator med getCollection men fungerade inte
-new_validator = {
-    "$jsonSchema": {
-        "bsonType": "object",
-        "required": ["firstName", "lastName", "email"],
-        "properties": {
-            "firstName": {
-                "bsonType": "string",
-                "description": "First name is required"
-            },
-            "lastName": {
-                "bsonType": "string",
-                "description": "Last name is required"
-            },
-            "email": {
-                "bsonType": "string",
-                "description": "Email is required and must be string",
-                "uniqueItems": True
-            },
-            "tasks": {
-                "bsonType": "array",
-                "items": {"bsonType": "objectId"}
-            }
-        }
-    }
-}
-
 
 @pytest.fixture()
 def real_dao():
-    client = MongoClient("mongodb://root:root@edutask-mongodb:27017")
+    MONGODB__URI = "mongodb://root:root@edutask-mongodb:27017"
+    client = MongoClient(MONGODB__URI)
     db = client.edutask
 
-    # Droppa kollektionen om den finns så vi alltid sätter rätt validator
+    # Get the validator for the user collection
+    userCollection = db.get_collection("user")
+    userValidator = getValidator(userCollection.name)
+
+    # Drop the collection if it exists
+    # Like Drop Table in SQL
     if "test_user" in db.list_collection_names():
         db.drop_collection("test_user")
 
-    # Skapa med custom validator
-    db.create_collection("test_user", validator=new_validator)
-    # Skapa ett unikt index på email-fältet eftersom validatorn inte stödjer unika index
+    # Create the collection with the validator
+    db.create_collection("test_user", validator=userValidator)
+    # We create a unique index on the email field so that two users cannot have the same email (Uniqueitems is not enough)
     db.test_user.create_index("email", unique=True)
 
-    dao = DAO("user")
-    dao.collection = db["test_user"]
+    dao = DAO("test_user")
+
     dao.collection.delete_many({})
 
     yield dao
