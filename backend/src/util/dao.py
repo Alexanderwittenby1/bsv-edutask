@@ -62,6 +62,7 @@ class DAO:
             return self.to_json(obj)
         except Exception as e:
             # forward any pymongo.errors.WriteError that occurs during insert_one
+            print(f"Error in DAO.create: {e}")
             raise
 
     def findOne(self, id: str):
