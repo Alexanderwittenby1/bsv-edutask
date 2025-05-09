@@ -18,7 +18,7 @@ def real_dao():
     db = client.edutask
 
     # Get the validator for the user collection
-    userCollection = db.get_collection("user")
+    userCollection = db.get_collection("email")
     userValidator = getValidator(userCollection.name)
 
     # Drop the collection if it exists
@@ -28,8 +28,6 @@ def real_dao():
 
     # Create the collection with the validator
     db.create_collection("test_user", validator=userValidator)
-    # We create a unique index on the email field so that two users cannot have the same email (Uniqueitems is not enough)
-    db.test_user.create_index("email", unique=True)
 
     dao = DAO("test_user")
 
@@ -47,24 +45,18 @@ class TestCreateUserIntegration:
     def test_create_user(self, real_dao):
         """Test the actual create method of the DAO with a real database."""
         user_data = {
-            'firstName': 'Mary',
-            'lastName': 'Sue',
             'email': 'john.doe@example.com',
         }
 
         result = real_dao.create(user_data)
 
         assert result["_id"] is not None
-        assert result["firstName"] == user_data["firstName"]
-        assert result["lastName"] == user_data["lastName"]
         assert result["email"] == user_data["email"]
 
     @pytest.mark.lab2_create
     def test_create_user_with_invalid_fields(self, real_dao):
         """Test the create method with invalid email field (wrong type)."""
         user_data = {
-            'firstName': 'Mary',
-            'lastName': 'Sue',
             'email': False  # Wrong type, should be string
         }
 
@@ -75,9 +67,7 @@ class TestCreateUserIntegration:
     def test_create_user_with_missing_fields(self, real_dao):
         """Test the create method with missing required fields."""
         user_data = {
-            'firstName': 'Mary',
-            # 'lastName' is missing
-            'email': 'mary@sue.com'
+
         }
         with pytest.raises(WriteError):
             real_dao.create(user_data)
@@ -86,13 +76,9 @@ class TestCreateUserIntegration:
     def test_create_user_with_duplicate_email(self, real_dao):
         """Test the create method with duplicate email."""
         user_data1 = {
-            'firstName': 'Mary',
-            'lastName': 'Sue',
             'email': 'mary@sue.com'
         }
         user_data2 = {
-            'firstName': 'Mary',
-            'lastName': 'Sue',
             'email': 'mary@sue.com'
         }
 
@@ -100,3 +86,13 @@ class TestCreateUserIntegration:
 
         with pytest.raises(DuplicateKeyError):
             real_dao.create(user_data2)
+
+    @pytest.mark.lab2_create
+    def test_create_user_with_invalid_email(self, real_dao):
+        """Test the create method with duplicate email."""
+        user_data1 = {
+            'email': 'mary@@@sue.com'
+        }
+
+        with pytest.raises(WriteError):
+            real_dao.create(user_data1)

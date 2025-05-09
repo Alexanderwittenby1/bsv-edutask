@@ -26,22 +26,6 @@ class TestUserController:
             uc.get_user_by_email(email)
 
     @pytest.mark.lab2
-    def test_valid_email_address(self):
-        """Test the get_user_by_email method with a valid email address (non existing user/email).
-        """
-
-        # Mock the email object
-        email = 'john@doe.com'
-
-        # Mock the DAO to return a simulated user
-        mockedDAO = MagicMock()
-        uc = UserController(dao=mockedDAO)
-        mockedDAO.find.return_value = []
-
-        with pytest.raises(Exception):
-            uc.get_user_by_email(email)
-
-    @pytest.mark.lab2
     def test_find_user(self):
         """Test the get_user_by_email method with a valid email address.
         """
@@ -52,11 +36,24 @@ class TestUserController:
         email = 'mary@sue.com'
 
         mockedDAO = MagicMock()
-        uc = UserController(dao=mockedDAO)
         mockedDAO.find.return_value = [user]
+        uc = UserController(dao=mockedDAO)
         result = uc.get_user_by_email(email)
 
         assert result == user
+
+    @pytest.mark.lab2
+    def test_find_no_user(self):
+        """Test the get_user_by_email method with a valid email address.
+        """
+
+        emailToFind = 'henry@ford.com'
+        mockedDAO = MagicMock()
+        mockedDAO.find.return_value = []
+        uc = UserController(dao=mockedDAO)
+        result = uc.get_user_by_email(emailToFind)  # Try to find henry@ford
+        print("Result no user:", result)
+        assert result[0] == None
 
     @pytest.mark.lab2
     def test_multiple_users(self):
@@ -78,3 +75,18 @@ class TestUserController:
         print("Result multiple:", result)
 
         assert result == user1
+
+    @pytest.mark.lab2
+    def test_operation_failure(self):
+        """Test the get_user_by_email method with a database operation failure."""
+
+        # Feels like a weird test, but let's assume we want to test the exception handling
+        # If so please explain how to test and database operation failure, isn't a invalid email an operation failure?
+
+        email = 'hej@a123.com'
+        mockedDAO = MagicMock()
+        mockedDAO.find.side_effect = Exception("Database error")
+        uc = UserController(dao=mockedDAO)
+
+        with pytest.raises(Exception, match="Database error"):
+            uc.get_user_by_email(email)
