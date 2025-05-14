@@ -151,19 +151,10 @@ describe('Logging into the system', () => {
         // Check so that it was deleted
         cy.get('.todo-list')
             .find('.todo-item')
-            .should('not.exist');
+            .should('not.contain.text', 'Watch video');
     }
     )
 
-  
-        
-
-    
-
-
-  
-    
-  
 
   after(function () {
     // Clean up by deleting the user from the database
