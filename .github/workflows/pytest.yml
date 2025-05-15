@@ -26,9 +26,9 @@ jobs:
       - name: Unit tests (lab2)
         run: |
           python -m pytest -m lab2
-        working-directory: backend
+        working-directory: ./backend
       - name: integration tests (lab2_create)
         run: |
           python -m pytest -m lab2_create
-        working-directory: backend
+        working-directory: ./backend
       
