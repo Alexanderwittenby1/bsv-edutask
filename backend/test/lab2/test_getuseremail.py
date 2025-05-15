@@ -53,6 +53,7 @@ class TestUserController:
         uc = UserController(dao=mockedDAO)
         assert uc.get_user_by_email(emailToFind) == None
 
+        # comment
     @pytest.mark.lab2
     def test_multiple_users(self):
         """Test the get_user_by_email method with a valid email address.
