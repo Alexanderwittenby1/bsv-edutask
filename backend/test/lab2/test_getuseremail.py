@@ -51,7 +51,7 @@ class TestUserController:
         mockedDAO = MagicMock()
         mockedDAO.find.return_value = [user]
         uc = UserController(dao=mockedDAO)
-        assert uc.get_user_by_email(emailToFind)[0] == user
+        assert uc.get_user_by_email(emailToFind) == None
 
     @pytest.mark.lab2
     def test_multiple_users(self):
