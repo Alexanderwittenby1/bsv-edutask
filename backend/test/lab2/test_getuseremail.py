@@ -46,10 +46,10 @@ class TestUserController:
     def test_find_no_user(self):
         """Test the get_user_by_email method with a valid email address.
         """
-        user = None
+
         emailToFind = 'henry@ford.com'
         mockedDAO = MagicMock()
-        mockedDAO.find.return_value = [user]
+        mockedDAO.find.return_value = [None]
         uc = UserController(dao=mockedDAO)
         assert uc.get_user_by_email(emailToFind) == None
 
