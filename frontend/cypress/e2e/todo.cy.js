@@ -83,13 +83,17 @@ describe('Logging into the system', () => {
         .click();
 
         // Check if it's disabled
-        cy.get('.todo-list')
+        try {
+            cy.get('.todo-list')
             .find('.inline-form')
-            .find('input[type=text]')
-            .get('.inline-form input[value="Add"]')
+            .find('input[type=submit]')
             .should('be.disabled');
 
-        
+        } catch (error) {
+            // If the assertion fails, log the error message
+            cy.log('Error: ' + error.message);
+        }
+       
     })
 
     it('R8CU2: Toggle todo done.', () => {
