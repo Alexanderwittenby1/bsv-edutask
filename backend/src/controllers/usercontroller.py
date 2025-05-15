@@ -34,6 +34,9 @@ class UserController(Controller):
             print(f'Found {len(users)} users with mail {email}')
             if len(users) == 1:
                 return users[0]
+            elif len(users) == 0:
+                print(f'Warning: no user found with mail {email}')
+                return None
             else:
                 print(f'Error: more than one user found with mail {email}')
                 return users[0]
