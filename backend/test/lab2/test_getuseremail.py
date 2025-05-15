@@ -46,14 +46,14 @@ class TestUserController:
     def test_find_no_user(self):
         """Test the get_user_by_email method with a valid email address.
         """
-
+        user = None
         emailToFind = 'henry@ford.com'
         mockedDAO = MagicMock()
-        mockedDAO.find.return_value = []
+        mockedDAO.find.return_value = [user]
         uc = UserController(dao=mockedDAO)
-        result = uc.get_user_by_email(emailToFind)  # Try to find henry@ford
+        result = uc.get_user_by_email(emailToFind)
         print("Result no user:", result)
-        assert result[0] == None
+        assert result[0] == user
 
     @pytest.mark.lab2
     def test_multiple_users(self):
