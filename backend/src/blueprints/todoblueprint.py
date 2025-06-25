@@ -7,12 +7,15 @@ from pymongo.errors import WriteError
 
 from src.controllers.todocontroller import TodoController
 from src.util.daos import getDao
-controller = TodoController(todo_dao=getDao(collection_name='todo'), tasks_dao=getDao(collection_name='task'))
+controller = TodoController(todo_dao=getDao(
+    collection_name='todo'), tasks_dao=getDao(collection_name='task'))
 
 # instantiate the flask blueprint
 todo_blueprint = Blueprint('todo_blueprint', __name__)
 
 # create a new task
+
+
 @todo_blueprint.route('/create', methods=['POST'])
 @cross_origin()
 def create():
@@ -27,6 +30,8 @@ def create():
         abort(500, 'Unknown server error')
 
 # obtain one user by id (and optionally update him)
+
+
 @todo_blueprint.route('/byid/<id>', methods=['GET', 'PUT', 'DELETE'])
 @cross_origin()
 def get_todo(id):
@@ -34,6 +39,7 @@ def get_todo(id):
         # get a specific todo
         if request.method == 'GET':
             todo = controller.get(id)
+            print(f'Obtained todo: {todo}')
             return jsonify(todo), 200
         # update the todo
         elif request.method == 'PUT':
